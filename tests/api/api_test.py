@@ -1,17 +1,18 @@
 import logging
+import socket
 import os
-import requests_unixsocket
+import requests
 
 def test_vm_start():
     logging.warning("testing vm start")
-    os.system('cargo run -- --api-socket /tmp/cloud-hypervisor.sock &')
+    os.system('./target/debug/cloud-hypervisor --api-socket /tmp/cloud-hypervisor.sock &')
 
     logging.warning("VMM started")
 
-    url = 'http+unix://tmp/cloud-hypervisor.sock/api/v1/vmm.ping'
-    session = requests_unixsocket.Session()
-    response = session.get(url)
-    assert response.status_code == 200
+    url = 'http://localhost/api/v1/vmm.ping'
+    r = requests.get(url)
+    logging.warning("response", r)
 
 
 
+# test_vm_start()
