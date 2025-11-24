@@ -17,7 +17,7 @@ def test_vmm_ping():
 
     max_wait = 30 # in seconds
     waited = 0
-    while not os.path.exists("/tmp/cloud-hypervisor.sock"):
+    while not os.path.exists("/tmp/cloud-hypervisor.sock") and waited < max_wait:
         time.sleep(0.1)
         waited += 0.1
         logging.info("waiting for creation of socket file")
