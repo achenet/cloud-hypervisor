@@ -17,11 +17,11 @@ def test_vmm_ping():
 
     max_wait = 30 # in seconds
     waited = 0
-    while not os.path.exists("/tmp/cloud-hypervisor.sock") and waited < max_wait:
+    while not os.path.exists("/tmp/cloud-hypervisor.sock"):
         time.sleep(0.1)
         waited += 0.1
-
-    assert os.path.exists("/tmp/cloud-hypervisor")
+        logging.info("waiting for creation of socket file")
+    assert os.path.exists("/tmp/cloud-hypervisor.sock")
 
     logging.info("VMM started")
 
