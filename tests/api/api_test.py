@@ -1,12 +1,30 @@
 import logging
+import time
 import os
 import requests_unixsocket
 
-def test_vm_start():
-    logging.info("testing vm start")
-    os.system('./target/debug/cloud-hypervisor --api-socket /tmp/cloud-hypervisor.sock &')
+def test_vmm_ping():
+    logging.info("testing vmm ping")
+
+    logging.info("clean up existing socket file, shutdown any running instances of cloud-hypervisor")
+    if os.path.exists("/tmp/cloud-hypervisor.sock"):
+        os.remove("/tmp/cloud-hypervisor.sock")
+
+    os.system("killall cloud-hypervisor")
+
+    logging.info("starting Cloud Hypervisor")
+    os.system("./target/debug/cloud-hypervisor --api-socket /tmp/cloud-hypervisor.sock &")
+
+    max_wait = 30 # in seconds
+    waited = 0
+    while not os.path.exists("/tmp/cloud-hypervisor.sock") and waited < max_wait:
+        time.sleep(0.1)
+        waited += 0.1
+
+    assert os.path.exists("/tmp/cloud-hypervisor")
 
     logging.info("VMM started")
+
 
     session = requests_unixsocket.Session()
     url = 'http+unix://%2Ftmp%2Fcloud-hypervisor.sock/api/v1/vmm.ping'
@@ -16,3 +34,5 @@ def test_vm_start():
 
     os.system('killall cloud-hypervisor')
     logging.info("vmm shutdown")
+
+
