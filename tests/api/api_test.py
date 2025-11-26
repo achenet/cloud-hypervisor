@@ -23,15 +23,18 @@ def test_vmm_ping():
         logging.info("waiting for creation of socket file")
     assert os.path.exists("/tmp/cloud-hypervisor.sock")
 
-    logging.info("VMM started")
+    logging.info("Cloud Hypervisor started")
 
 
     session = requests_unixsocket.Session()
+
+    logging.info("testing ping")
     url = 'http+unix://%2Ftmp%2Fcloud-hypervisor.sock/api/v1/vmm.ping'
     r = session.get(url)
-    logging.info(f"response: {r.status_code} - {r.text}")
+    logging.info(f"ping response: {r.status_code} - {r.text}")
     assert r.status_code == 200
 
+    logging.info("shutting down Cloud Hypervisor")
     os.system('killall cloud-hypervisor')
     logging.info("vmm shutdown")
 
